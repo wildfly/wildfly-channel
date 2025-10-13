@@ -54,7 +54,7 @@
         <version.org.mockito>5.14.2</version.org.mockito>
         <version.org.wiremock>3.13.1</version.org.wiremock>
         <version.org.assertj>3.27.4</version.org.assertj>
-        <version.org.pgpainless>1.6.7</version.org.pgpainless>
+        <version.org.pgpainless>2.0.1</version.org.pgpainless>
         <version.release.plugin>3.1.1</version.release.plugin>
         <version.maven.resolver-api>1.9.22</version.maven.resolver-api>
         <version.maven.repository.metadata>3.9.9</version.maven.repository.metadata>
