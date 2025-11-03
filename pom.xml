@@ -50,7 +50,7 @@
         <version.org.apache.commons.commons-lang3>3.17.0</version.org.apache.commons.commons-lang3>
         <version.org.apache.httpcomponents.httpclient>4.5.14</version.org.apache.httpcomponents.httpclient>
         <version.org.bouncycastle>1.78.1</version.org.bouncycastle>
-        <version.io.specto.hoverfly>0.19.1</version.io.specto.hoverfly>
+        <version.io.specto.hoverfly>0.20.2</version.io.specto.hoverfly>
         <version.org.mockito>5.14.2</version.org.mockito>
         <version.org.wiremock>3.13.1</version.org.wiremock>
         <version.org.assertj>3.27.4</version.org.assertj>
