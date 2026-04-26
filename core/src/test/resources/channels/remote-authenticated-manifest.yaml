@@ -1,0 +1,6 @@
+schemaVersion: 1.1.0
+name: remote
+streams:
+  - groupId: org.acme
+    artifactId: artifact
+    version: 1.0.0

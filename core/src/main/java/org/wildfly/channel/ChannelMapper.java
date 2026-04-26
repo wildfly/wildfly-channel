@@ -22,6 +22,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -112,7 +113,9 @@ public class ChannelMapper {
             if (!messages.isEmpty()) {
                 throw new InvalidChannelMetadataException("Invalid channel", messages);
             }
-            return OBJECT_MAPPER.readValue(channelURL, Channel.class);
+            try (InputStream input = UrlContentLoader.openStream(channelURL)) {
+                return OBJECT_MAPPER.readValue(input, Channel.class);
+            }
         } catch (IOException | URISyntaxException e) {
             throw wrapException(e);
         }
@@ -135,10 +138,12 @@ public class ChannelMapper {
     }
 
     private static List<String> validate(URL url) throws IOException {
-        JsonNode node = OBJECT_MAPPER.readTree(url);
-        JsonSchema schema = getSchema(node);
-        Set<ValidationMessage> validationMessages = schema.validate(node);
-        return validationMessages.stream().map(ValidationMessage::getMessage).collect(Collectors.toList());
+        try (InputStream input = UrlContentLoader.openStream(url)) {
+            JsonNode node = OBJECT_MAPPER.readTree(input);
+            JsonSchema schema = getSchema(node);
+            Set<ValidationMessage> validationMessages = schema.validate(node);
+            return validationMessages.stream().map(ValidationMessage::getMessage).collect(Collectors.toList());
+        }
     }
 
     private static List<String> validateString(String yamlContent) throws IOException {

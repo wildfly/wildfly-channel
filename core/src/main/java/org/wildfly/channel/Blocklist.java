@@ -18,6 +18,7 @@
 package org.wildfly.channel;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
@@ -85,8 +86,9 @@ public class Blocklist {
          if (!messages.isEmpty()) {
             throw new InvalidChannelMetadataException("Invalid blocklist", messages);
          }
-         Blocklist blocklist = OBJECT_MAPPER.readValue(blocklistUrl, Blocklist.class);
-         return blocklist;
+         try (InputStream input = UrlContentLoader.openStream(blocklistUrl)) {
+            return OBJECT_MAPPER.readValue(input, Blocklist.class);
+         }
       } catch (IOException | URISyntaxException e) {
          throw wrapException(e);
       }
@@ -119,11 +121,13 @@ public class Blocklist {
    }
 
    private static List<String> validate(URL url) throws IOException {
-      JsonNode node = OBJECT_MAPPER.readTree(url);
-      JsonSchema schema = getSchema(node);
-      schema.initializeValidators();
-      Set<ValidationMessage> validationMessages = schema.validate(node);
-      return validationMessages.stream().map(ValidationMessage::getMessage).collect(Collectors.toList());
+      try (InputStream input = UrlContentLoader.openStream(url)) {
+         JsonNode node = OBJECT_MAPPER.readTree(input);
+         JsonSchema schema = getSchema(node);
+         schema.initializeValidators();
+         Set<ValidationMessage> validationMessages = schema.validate(node);
+         return validationMessages.stream().map(ValidationMessage::getMessage).collect(Collectors.toList());
+      }
    }
 
    private static JsonSchema getSchema(JsonNode node) {
