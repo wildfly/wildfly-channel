@@ -58,7 +58,7 @@ jobs:
     - name: coverage
       run: mvn -B verify --file pom.xml -Pcoverage
     - name: upload report
-      uses: 'actions/upload-artifact@v4'
+      uses: 'actions/upload-artifact@v6'
       with:
         name: "jacoco-${{ matrix.jdk }}"
         path: coverage/target/site/jacoco-aggregate
