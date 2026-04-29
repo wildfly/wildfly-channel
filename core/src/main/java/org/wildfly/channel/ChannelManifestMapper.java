@@ -30,6 +30,7 @@ import org.wildfly.channel.version.VersionMatcher;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -106,8 +107,9 @@ public class ChannelManifestMapper extends VersionedMapper {
             if (!messages.isEmpty()) {
                 throw new InvalidChannelMetadataException("Invalid manifest", messages);
             }
-            ChannelManifest channelManifest = OBJECT_MAPPER.readValue(manifestURL, ChannelManifest.class);
-            return channelManifest;
+            try (InputStream input = UrlContentLoader.openStream(manifestURL)) {
+                return OBJECT_MAPPER.readValue(input, ChannelManifest.class);
+            }
         } catch (FileNotFoundException e) {
             final InvalidChannelMetadataException ice = new InvalidChannelMetadataException("Unable to resolve manifest.", List.of(manifestURL.toString()));
             ice.initCause(e);
@@ -135,10 +137,12 @@ public class ChannelManifestMapper extends VersionedMapper {
     }
 
     private static List<String> validate(URL url) throws IOException {
-        JsonNode node = OBJECT_MAPPER.readTree(url);
-        JsonSchema schema = getSchema(node);
-        Set<ValidationMessage> validationMessages = schema.validate(node);
-        return validationMessages.stream().map(ValidationMessage::getMessage).collect(Collectors.toList());
+        try (InputStream input = UrlContentLoader.openStream(url)) {
+            JsonNode node = OBJECT_MAPPER.readTree(input);
+            JsonSchema schema = getSchema(node);
+            Set<ValidationMessage> validationMessages = schema.validate(node);
+            return validationMessages.stream().map(ValidationMessage::getMessage).collect(Collectors.toList());
+        }
     }
 
     private static List<String> validateString(String yamlContent) throws IOException {
