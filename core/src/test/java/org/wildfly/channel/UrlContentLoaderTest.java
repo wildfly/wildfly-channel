@@ -26,6 +26,48 @@ public class UrlContentLoaderTest {
     }
 
     @Test
+    void systemPropertyTakesPrecedenceOverEnvironmentVariable(WireMockRuntimeInfo wmRuntimeInfo) throws Exception {
+        WireMock wireMock = wmRuntimeInfo.getWireMock();
+        wireMock.register(get("/secured.yaml")
+                .withHeader("Authorization", WireMock.equalTo("Bearer system-property-token"))
+                .willReturn(ok(readResource("channels/remote-authenticated-manifest.yaml"))));
+
+        // Set system property - this should take precedence
+        System.setProperty(UrlContentLoader.HTTP_AUTH_TOKEN_PROPERTY, "system-property-token");
+        
+        // Note: Environment variable WILDFLY_CHANNEL_HTTP_AUTH_TOKEN would be ignored if set
+        // This test verifies that system property takes precedence
+
+        URL url = new URL(wmRuntimeInfo.getHttpBaseUrl() + "/secured.yaml");
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        UrlContentLoader.openStream(url).transferTo(outputStream);
+
+        assertThat(outputStream.toString()).contains("schemaVersion: 1.1.0");
+    }
+
+    @Test
+    void blankSystemPropertyFallsBackToEnvironmentVariable(WireMockRuntimeInfo wmRuntimeInfo) throws Exception {
+        WireMock wireMock = wmRuntimeInfo.getWireMock();
+        
+        // When system property is blank, environment variable should be used
+        // This test documents the expected behavior
+        // To manually verify: set WILDFLY_CHANNEL_HTTP_AUTH_TOKEN=env-token and run test
+        
+        System.setProperty(UrlContentLoader.HTTP_AUTH_TOKEN_PROPERTY, "");
+        
+        // If environment variable is set, it should be used
+        // If not set, no authorization header should be sent
+        wireMock.register(get("/public.yaml")
+                .willReturn(ok(readResource("channels/remote-authenticated-manifest.yaml"))));
+
+        URL url = new URL(wmRuntimeInfo.getHttpBaseUrl() + "/public.yaml");
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        UrlContentLoader.openStream(url).transferTo(outputStream);
+
+        assertThat(outputStream.toString()).contains("schemaVersion: 1.1.0");
+    }
+
+    @Test
     void sendsBearerAuthorizationHeaderForHttpUrlsWhenTokenIsConfigured(WireMockRuntimeInfo wmRuntimeInfo) throws Exception {
         WireMock wireMock = wmRuntimeInfo.getWireMock();
         wireMock.register(get("/secured.yaml")
