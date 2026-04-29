@@ -43,7 +43,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <version.com.fasterxml.jackson>2.18.2</version.com.fasterxml.jackson>
-        <version.com.fasterxml.jackson.databind>2.18.2</version.com.fasterxml.jackson.databind>
+        <version.com.fasterxml.jackson.databind>2.20.0</version.com.fasterxml.jackson.databind>
         <version.com.networknt.json-schema-validator>1.5.4</version.com.networknt.json-schema-validator>
         <version.junit5>5.13.4</version.junit5>
         <version.org.jboss.logging>3.6.1.Final</version.org.jboss.logging>
