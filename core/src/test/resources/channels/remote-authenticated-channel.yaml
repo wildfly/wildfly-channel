@@ -1,0 +1,8 @@
+schemaVersion: 2.0.0
+name: remote
+description: desc
+repositories:
+  - id: test
+    url: https://repo.example.org/maven2
+manifest:
+  url: https://repo.example.org/manifest.yaml

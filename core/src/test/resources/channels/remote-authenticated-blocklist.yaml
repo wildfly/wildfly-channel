@@ -1,0 +1,6 @@
+schemaVersion: 1.0.0
+blocks:
+  - groupId: org.acme
+    artifactId: artifact
+    versions:
+      - 1.0.0

@@ -194,6 +194,75 @@ Maven repositories and use the latest version that matches the pattern. If no ve
 
 A channel defines repositories using their `id` and a default `url`. When creating the channel from definition the provisioning tool can replace the provided `url` with URL of a proxy server or an alternative repository. The `id` of the repository must not be changed.
 
+### Authenticating URL-based metadata files
+
+When channel definitions, manifests, or blocklists are hosted on remote servers that require authentication, the WildFly Channel library supports pre-emptive authentication using Bearer tokens.
+
+#### Configuration
+
+Authentication can be configured using either a system property or an environment variable:
+
+* System property: `org.wildfly.channel.http.auth.token`
+* Environment variable: `WILDFLY_CHANNEL_HTTP_AUTH_TOKEN`
+
+The system property takes precedence over the environment variable. If the system property is not set (or is a blank value), the environment variable will be checked as a fallback.
+
+When either configuration is set to a non-blank value, the library will automatically include an `Authorization` header with the Bearer token in all HTTP and HTTPS requests for channel metadata files.
+
+#### Supported resources
+
+Pre-emptive authentication is supported for the following resources when accessed via URL:
+
+* Channel definitions (when using `url` field in channel resolution)
+* Channel manifests (when using `url` field in manifest coordinate definition)
+* Blocklists (when using `url` field in blocklist coordinate definition)
+
+#### Protocol requirements
+
+Authentication is only applied to HTTP and HTTPS URLs. Other protocols (such as `file://`) do not support authentication and will ignore the configured token.
+
+#### Authorization header format
+
+When the `org.wildfly.channel.http.auth.token` property is set to a non-blank value, the library sends the following HTTP header:
+
+```
+Authorization: Bearer <token>
+```
+
+Where `<token>` is the value of the system property.
+
+#### Usage examples
+
+To configure authentication for downloading channel metadata using a system property:
+
+```bash
+java -Dorg.wildfly.channel.http.auth.token=my-secret-token ...
+```
+
+Alternatively, using an environment variable:
+
+```bash
+export WILDFLY_CHANNEL_HTTP_AUTH_TOKEN=my-secret-token
+java ...
+```
+
+Or set inline:
+
+```bash
+WILDFLY_CHANNEL_HTTP_AUTH_TOKEN=my-secret-token java ...
+```
+
+Any of these configurations will cause all HTTP/HTTPS requests for channel, manifest, and blocklist files to include the Bearer token in the Authorization header.
+
+[NOTE]
+====
+The authentication token is sent with every HTTP/HTTPS request for metadata files. Ensure that:
+
+* The token is kept secure and not exposed in logs or version control
+* HTTPS is used when transmitting sensitive tokens to prevent interception
+* The token has appropriate permissions for accessing the required resources
+====
+
 ### Blocking artifact versions
 When using an open channel, a situation may arise where certain artifacts are promoted to the channel and later discovered to be invalid. As it’s impossible to remove artifacts already deployed into a repository, those versions have to blocklisted.
 
