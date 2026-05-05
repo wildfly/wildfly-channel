@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-final class UrlContentLoader {
+public final class UrlContentLoader {
 
     static final String HTTP_AUTH_TOKEN_PROPERTY = "org.wildfly.channel.http.auth.token";
     static final String HTTP_AUTH_TOKEN_ENV_VAR = "WILDFLY_CHANNEL_HTTP_AUTH_TOKEN";
@@ -33,7 +33,7 @@ final class UrlContentLoader {
         return token;
     }
 
-    static InputStream openStream(URL url) throws IOException {
+    public static InputStream openStream(URL url) throws IOException {
         URLConnection connection = url.openConnection();
         String protocol = url.getProtocol();
         if ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)) {
