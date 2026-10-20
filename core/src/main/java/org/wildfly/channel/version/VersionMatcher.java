@@ -93,11 +93,11 @@ public interface VersionMatcher {
                 i2 = ei2;
                 if (i1 != i2)
                     return i2 - i1;
-            } else if (c1 == c2) {
+            } else if (Character.toLowerCase(c1) == Character.toLowerCase(c2)) {
                 i1++;
                 i2++;
             } else {
-                return c1 - c2;
+                return Character.toLowerCase(c1) - Character.toLowerCase(c2);
             }
         }
         return lim1 - lim2;
