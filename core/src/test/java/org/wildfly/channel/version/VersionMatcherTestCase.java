@@ -157,6 +157,13 @@ public class VersionMatcherTestCase {
                 "1:1.1", "2:1.1");
     }
 
+    @Test
+    public void test22() {
+        // SP1 is a service pack on top of the base version, so 4.0.11.SP1-redhat-00001 must be the latest
+        assertLatestVersion("4.0.11.SP1-redhat-00001",
+                "4.0.11.redhat-00001", "4.0.11.SP1-redhat-00001");
+    }
+
     private static void assertLatestVersion(String expectedLatest, String... versions) {
         assertEquals(expectedLatest, getLatestVersion(Set.of(versions)).get());
     }
