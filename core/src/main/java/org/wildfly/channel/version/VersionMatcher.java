@@ -89,6 +89,8 @@ public interface VersionMatcher {
                 final long n2 = ei2 == i2 ? 0 : Long.valueOf(v2.substring(i2, ei2));
                 if (n1 != n2)
                     return (int)(n1 - n2);
+                if ((ei1 == i1) != (ei2 == i2))
+                    return (ei1 == i1) ? -1 : 1;
                 i1 = ei1;
                 i2 = ei2;
                 if (i1 != i2)
