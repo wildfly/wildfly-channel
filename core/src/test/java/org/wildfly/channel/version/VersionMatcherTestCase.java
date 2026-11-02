@@ -164,6 +164,18 @@ public class VersionMatcherTestCase {
                 "4.0.11.redhat-00001", "4.0.11.SP1-redhat-00001");
     }
 
+    @Test
+    public void test23() {
+        assertLatestVersion("5.0.0.SP3-redhat-00001",
+                "5.0.SP3", "5.0.0.SP3-redhat-00001");
+    }
+
+    @Test
+    public void test24() {
+        assertLatestVersion("1.0.0.redhat-00009",
+                "1.0.redhat-6", "1.0.0.redhat-8", "1.0.0.redhat-00009");
+    }
+
     private static void assertLatestVersion(String expectedLatest, String... versions) {
         assertEquals(expectedLatest, getLatestVersion(Set.of(versions)).get());
     }
